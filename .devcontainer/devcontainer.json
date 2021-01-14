@@ -21,7 +21,9 @@
 
 	// Add the IDs of extensions you want installed when the container is created.
 	"extensions": [
-		"ms-dotnettools.csharp"
+		"ms-dotnettools.csharp",
+		"jchannon.csharpextensions",
+		"jmrog.vscode-nuget-package-manager"
 	],
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
