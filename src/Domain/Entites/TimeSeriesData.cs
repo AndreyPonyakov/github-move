@@ -5,6 +5,6 @@ namespace Domain.Entites
 {
     public class TimeSeriesData
     {
-        public List<Point> Points { get; set; }
+        public List<Observation> Points { get; set; }
     }
 }

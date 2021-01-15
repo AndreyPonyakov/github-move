@@ -4,11 +4,19 @@ namespace Infrastructure.Scrappers
 {
     public class KoreanPowerDemandScrapper : IScrapper
     {
-        private string mainlandURL;
+        private string _mainlandURL;
+        public string Name { get; private set; }
 
-        public KoreanPowerDemandScrapper(string mainlandURL)
+
+        public KoreanPowerDemandScrapper(string mainlandURL, string name)
         {
-            this.mainlandURL = mainlandURL;
+            _mainlandURL = mainlandURL;
+            Name = name;
+        }
+
+        public decimal GetData()
+        {
+            return 1;
         }
     }
 }

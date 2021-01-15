@@ -1,3 +1,4 @@
+using Domain.Entites;
 using Infrastructure.Interfaces;
 
 namespace Infrastructure.Storages
@@ -9,6 +10,11 @@ namespace Infrastructure.Storages
         public AngaraDataCatalogStorage(string mainlandTimeSeriesName)
         {
             this.mainlandTimeSeriesName = mainlandTimeSeriesName;
+        }
+
+        public void Save(Observation observation)
+        {
+            // ToDo Implement storing
         }
     }
 }
