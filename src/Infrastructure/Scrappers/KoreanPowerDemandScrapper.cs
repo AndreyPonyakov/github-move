@@ -1,3 +1,5 @@
+using System;
+using Domain.Entites;
 using Infrastructure.Interfaces;
 
 namespace Infrastructure.Scrappers
@@ -14,9 +16,9 @@ namespace Infrastructure.Scrappers
             Name = name;
         }
 
-        public decimal GetData()
+        public Observation GetData()
         {
-            return 1;
+            return new Observation(DateTimeOffset.UtcNow, 1M);
         }
     }
 }

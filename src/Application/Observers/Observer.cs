@@ -7,7 +7,7 @@ using NLog;
 
 namespace Application.Observers
 {
-    public class Observer
+    public sealed class Observer : IDisposable
     {
         private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
         private IScrapper _scrapper;
@@ -23,6 +23,16 @@ namespace Application.Observers
             _storage = storage;
         }
 
+        ~Observer()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+        }
+    
         public void Run()
         {
             if (_timer == null)
@@ -54,9 +64,8 @@ namespace Application.Observers
             // the previous event is finished processing, the second
             // event should be ignored.
 
-            decimal value = _scrapper.GetData();
-            Logger.Trace("Recived data {0} from {1}", value, _scrapper.Name);
-            var observation = new Observation(DateTime.Now, value);
+            Observation observation = _scrapper.GetData();
+            Logger.Trace("Recived data {0} from {1}", observation.CurrentLoad, _scrapper.Name);
 
             _observations.Enqueue(observation);
 
@@ -70,9 +79,33 @@ namespace Application.Observers
                 Observation observation;
                 if (_observations.TryDequeue(out observation))
                 {
-                    _storage.Save(observation);
-                }                
+                    try
+                    {
+                        _storage.Save(observation);
+                    }
+                    catch(Exception ex)
+                    {
+                        Logger.Error(ex, "Observation saving failed");
+                        _observations.Enqueue(observation);
+                        Thread.Sleep(1000);
+                    }
+                }
+                else
+                {
+                    Thread.Sleep(1000);
+                }
             }
+        }
+
+        private void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                GC.SuppressFinalize(this);
+            }
+
+            _storage.Dispose();
+            _storage = null;
         }
     }
 }

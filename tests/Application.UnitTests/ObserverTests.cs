@@ -16,6 +16,7 @@ namespace Application.UnitTests
             // Arrange
             const double ONE_SECOND = 1.0 / 60;
             var scrapper = new Mock<IScrapper>();
+            scrapper.Setup(s => s.GetData()).Returns(new Observation(DateTimeOffset.UtcNow, 1M));
             var storage = new Mock<IStorage>();
             var observer = new Observer(scrapper.Object, storage.Object, ONE_SECOND);
 
