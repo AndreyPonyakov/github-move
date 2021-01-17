@@ -5,6 +5,7 @@ using Gazprom.Angara.Client.Storage;
 using Gazprom.Angara.Contract.Entities.TimeSeries;
 using Gazprom.Angara.Contract.Messages;
 using Gazprom.Core.Contract.Entities.Http;
+using Infrastructure.Exceptions;
 using Infrastructure.Storages;
 using Moq;
 using Xunit;

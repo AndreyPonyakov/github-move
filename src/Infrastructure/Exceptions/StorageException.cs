@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.Serialization;
 
-namespace Infrastructure.Storages
+namespace Infrastructure.Exceptions
 {
     [Serializable]
     public class StorageException : Exception

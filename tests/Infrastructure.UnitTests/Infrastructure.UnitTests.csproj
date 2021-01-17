@@ -20,4 +20,9 @@
     <ProjectReference Include="..\..\src\Infrastructure\Infrastructure.csproj"/>
     <ProjectReference Include="..\..\src\Domain\Domain.csproj"/>
   </ItemGroup>
+  <ItemGroup>
+      <None Update=".\data\test1.txt" CopyToOutputDirectory="PreserveNewest" />          
+      <None Update=".\data\test2.txt" CopyToOutputDirectory="PreserveNewest" />
+      <None Update=".\data\WrongContent.txt" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
 </Project>
