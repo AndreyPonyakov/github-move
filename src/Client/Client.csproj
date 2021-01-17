@@ -2,10 +2,11 @@
   <ItemGroup>
     <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
     <ProjectReference Include="..\Application\Application.csproj"/>
-    <None Update="nlog.config" CopyToOutputDirectory="Always" />
+    <None Update="nlog.config" CopyToOutputDirectory="PreserveNewest"/>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.7.6"/>
+    <PackageReference Include="Moq" Version="4.15.2"/>
   </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>

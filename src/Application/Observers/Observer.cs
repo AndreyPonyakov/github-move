@@ -65,7 +65,7 @@ namespace Application.Observers
             // event should be ignored.
 
             Observation observation = _scrapper.GetData();
-            Logger.Trace("Recived data {0} from {1}", observation.CurrentLoad, _scrapper.Name);
+            Logger.Info($"Recived an observation ({observation.TimeStamp.ToString("u")}, {observation.CurrentLoad})  from {_scrapper.Name}");
 
             _observations.Enqueue(observation);
 
@@ -82,6 +82,7 @@ namespace Application.Observers
                     try
                     {
                         _storage.Save(observation);
+                        Logger.Trace($"Observation ({observation.TimeStamp.ToString("u")}, {observation.CurrentLoad}) was saved");
                     }
                     catch(Exception ex)
                     {
@@ -104,8 +105,17 @@ namespace Application.Observers
                 GC.SuppressFinalize(this);
             }
 
-            _storage.Dispose();
-            _storage = null;
+            if (_storage != null)
+            {
+                _storage.Dispose();
+                _storage = null;
+            }
+
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
         }
     }
 }

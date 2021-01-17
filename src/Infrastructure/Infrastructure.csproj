@@ -5,6 +5,7 @@
   <ItemGroup>
     <PackageReference Include="Gazprom.Angara.Client" Version="0.1.0-CI-20201102-154822"/>
     <PackageReference Include="NLog" Version="4.7.6"/>
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.29"/>
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
