@@ -20,18 +20,25 @@ namespace Infrastructure.Storages
 
         public AngaraDataCatalogStorage(string seriesName, string curveId, IDataStorageClient client)
         {
+            if (string.IsNullOrEmpty(seriesName))
+                throw new ArgumentNullException("seriesName");
+
+            if (string.IsNullOrEmpty(curveId))
+                throw new ArgumentNullException("curveId");
+
+            if (client == null)
+                throw new ArgumentNullException("client");
+
             _seriesName = seriesName;
             _client = client;
             _curveId = curveId;
         }
 
-        ~AngaraDataCatalogStorage()
-        {
-            Dispose(false);
-        }
-
         public void Save(Observation observation)
         {
+            if (observation == null)
+                throw new ArgumentNullException("observation");
+
             var timeseries = MakeTimeseriesData(observation);
 
             var request = CreateRequest();
@@ -48,7 +55,8 @@ namespace Infrastructure.Storages
 
         public void Dispose()
         {
-            Dispose(true);
+            _client.Dispose();
+            _client = null;
         }
 
         private TimeSeriesData MakeTimeseriesData(Observation observation)
@@ -88,17 +96,6 @@ namespace Infrastructure.Storages
             };
 
             return request;
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                GC.SuppressFinalize(this);
-            }
-
-            _client.Dispose();
-            _client = null;
         }
     }
 }

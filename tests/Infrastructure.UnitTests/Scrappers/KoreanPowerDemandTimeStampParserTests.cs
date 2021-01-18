@@ -31,7 +31,7 @@ namespace Infrastructure.UnitTests
 
             // Act
             // Assert
-            Assert.Throws<ScrapperException>(() => parser.Parse(content));
+            Assert.Throws<ArgumentNullException>(() => parser.Parse(content));
         }
 
         [Fact]

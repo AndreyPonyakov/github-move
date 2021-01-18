@@ -19,19 +19,29 @@ namespace Application.Observers
 
         public Observer(IScrapper scrapper, IStorage storage, double intervalMinutes)
         {
+            if (scrapper == null)
+                throw new ArgumentNullException("scrapper");
+            if (storage == null)
+                throw new ArgumentNullException("storage");
+
             _intervalMinutes = intervalMinutes;
             _scrapper = scrapper;
             _storage = storage;
         }
 
-        ~Observer()
-        {
-            Dispose(false);
-        }
-
         public void Dispose()
         {
-            Dispose(true);
+            if (_storage != null)
+            {
+                _storage.Dispose();
+                _storage = null;
+            }
+
+            if (_timer != null)
+            {
+                _timer.Dispose();
+                _timer = null;
+            }
         }
     
         public void Run()
@@ -109,26 +119,6 @@ namespace Application.Observers
             }
 
             return observations;
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                GC.SuppressFinalize(this);
-            }
-
-            if (_storage != null)
-            {
-                _storage.Dispose();
-                _storage = null;
-            }
-
-            if (_timer != null)
-            {
-                _timer.Dispose();
-                _timer = null;
-            }
         }
     }
 }

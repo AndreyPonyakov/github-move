@@ -19,6 +19,21 @@ namespace Infrastructure.Scrappers
         public KoreanPowerDemandScrapper(string mainlandURL, string name, ITimeStampParser timeStampParser, 
             ISiteReader siteReader, ICurrentLoadParser currentLoadParser)
         {
+            if (string.IsNullOrEmpty(mainlandURL))
+                throw new ArgumentNullException("mainlandURL");
+
+            if (string.IsNullOrEmpty(name))
+                throw new ArgumentNullException("name");
+
+            if (timeStampParser == null)
+                throw new ArgumentNullException("timeStampParser");
+
+            if (siteReader == null)
+                throw new ArgumentNullException("siteReader");
+
+            if (currentLoadParser == null)
+                throw new ArgumentNullException("currentLoadParser");
+
             _siteReader = siteReader;
             _timeStampParser = timeStampParser;
             _mainlandURL = mainlandURL;

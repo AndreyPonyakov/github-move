@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -9,6 +10,9 @@ public class SiteReader : ISiteReader
 
     public SiteReader(string url)
     {
+        if (string.IsNullOrEmpty(url))
+            throw new ArgumentNullException("url");
+            
         _url = url;
     }
 
@@ -17,7 +21,7 @@ public class SiteReader : ISiteReader
         var request = (HttpWebRequest)WebRequest.Create(_url);
         request.Method = "GET";
 
-        var response = (HttpWebResponse)request.GetResponse();
+        using var response = (HttpWebResponse)request.GetResponse();
         if (response.StatusCode != HttpStatusCode.OK)
         {
             throw new ScrapperException("Failed to get html content");

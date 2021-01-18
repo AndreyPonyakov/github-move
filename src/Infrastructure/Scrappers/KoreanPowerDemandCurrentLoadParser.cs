@@ -8,6 +8,9 @@ public class KoreanPowerDemandCurrentLoadParser : ICurrentLoadParser
 {
     public decimal Parse(string content)
     {
+        if (string.IsNullOrEmpty(content))
+            throw new ArgumentNullException("content");
+
         var htmlDocument = new HtmlDocument();
         htmlDocument.LoadHtml(content);
 
