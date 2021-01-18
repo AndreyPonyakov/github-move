@@ -30,15 +30,9 @@ namespace Infrastructure.Storages
             if (client == null)
                 throw new ArgumentNullException("client");
 
-
             _seriesName = seriesName;
             _client = client;
             _curveId = curveId;
-        }
-
-        ~AngaraDataCatalogStorage()
-        {
-            Dispose(false);
         }
 
         public void Save(Observation observation)
@@ -89,7 +83,8 @@ namespace Infrastructure.Storages
 
         public void Dispose()
         {
-            Dispose(true);
+            _client.Dispose();
+            _client = null;
         }
 
         private TimeSeriesData MakeTimeseriesData(Observation observation)
@@ -129,17 +124,6 @@ namespace Infrastructure.Storages
             };
 
             return request;
-        }
-
-        private void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                GC.SuppressFinalize(this);
-            }
-
-            _client.Dispose();
-            _client = null;
         }
     }
 }

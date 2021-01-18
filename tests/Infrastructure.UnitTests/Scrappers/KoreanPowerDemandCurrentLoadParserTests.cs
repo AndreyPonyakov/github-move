@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using Infrastructure.Exceptions;
 using Xunit;
@@ -43,7 +44,7 @@ namespace Infrastructure.UnitTests
 
             // Act
             // Assert
-            Assert.Throws<ScrapperException>(() => parser.Parse(content));
+            Assert.Throws<ArgumentNullException>(() => parser.Parse(content));
         }
 
         [Fact]

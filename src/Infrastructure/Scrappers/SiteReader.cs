@@ -1,3 +1,4 @@
+using System;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -10,6 +11,9 @@ public class SiteReader : ISiteReader
 
     public SiteReader(string url)
     {
+        if (string.IsNullOrEmpty(url))
+            throw new ArgumentNullException("url");
+            
         _url = url;
     }
 
