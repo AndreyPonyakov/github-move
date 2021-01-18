@@ -81,7 +81,7 @@ namespace Infrastructure.Storages
 
             var request = new StoreDataRequest<TimeSeriesData>
             {
-                CaptureSystem = "LinqPadDemo-StoreOne-TSD",
+                CaptureSystem = _seriesName,
                 CaptureTimeStampUtc = DateTime.UtcNow,		
                 EffectiveOn = effectiveDate,
                 DataId = dataId

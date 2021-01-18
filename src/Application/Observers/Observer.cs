@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Threading;
 using Domain.Entites;
 using Infrastructure.Interfaces;
@@ -57,45 +58,57 @@ namespace Application.Observers
         }
 
         private void MakeObservation()
-        {            
-            Logger.Trace("Making an observation...");
-            
-            // ToDo if an event is raised before
-            // the previous event is finished processing, the second
-            // event should be ignored.
+        {
+            try
+            {            
+                Logger.Trace("Making an observation...");
+                Logger.Trace(Thread.CurrentThread.ManagedThreadId);
 
-            Observation observation = _scrapper.GetData();
-            Logger.Info($"Recived an observation ({observation.TimeStamp.ToString("u")}, {observation.CurrentLoad})  from {_scrapper.Name}");
+                var observation = _scrapper.GetData();
+                Logger.Info($"Recived an observation ({observation.TimeStamp.ToString("u")}, {observation.CurrentLoad})  from {_scrapper.Name}");
 
-            _observations.Enqueue(observation);
+                _observations.Enqueue(observation);
 
-            SaveResult();
+                SaveResult();
+            }
+            catch(Exception ex)
+            {
+                Logger.Error(ex, "Making an observation failed");
+            }
         }
 
         private void SaveResult()
         {
+            var observations = GetObservationsFromConcurrentCollection();
+
+            foreach (var o in observations)
+            {
+                try
+                {
+                    _storage.Save(o);
+                    Logger.Trace($"Observation ({o.TimeStamp.ToString("u")}, {o.CurrentLoad}) was saved");
+                }
+                catch (Exception ex)
+                {
+                    Logger.Error(ex, "Observation saving failed");
+                    _observations.Enqueue(o);
+                }
+            }
+        }
+
+        private IEnumerable<Observation> GetObservationsFromConcurrentCollection()
+        {
+            var observations = new List<Observation>();
             while (!_observations.IsEmpty)
             {
                 Observation observation;
                 if (_observations.TryDequeue(out observation))
                 {
-                    try
-                    {
-                        _storage.Save(observation);
-                        Logger.Trace($"Observation ({observation.TimeStamp.ToString("u")}, {observation.CurrentLoad}) was saved");
-                    }
-                    catch(Exception ex)
-                    {
-                        Logger.Error(ex, "Observation saving failed");
-                        _observations.Enqueue(observation);
-                        Thread.Sleep(1000);
-                    }
-                }
-                else
-                {
-                    Thread.Sleep(1000);
+                    observations.Add(observation);
                 }
             }
+
+            return observations;
         }
 
         private void Dispose(bool disposing)
