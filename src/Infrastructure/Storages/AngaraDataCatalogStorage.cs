@@ -1,4 +1,5 @@
 using System;
+using System.Threading.Tasks;
 using Domain.Entites;
 using Gazprom.Angara.Client.Contract;
 using Gazprom.Angara.Client.Storage;
@@ -20,6 +21,16 @@ namespace Infrastructure.Storages
 
         public AngaraDataCatalogStorage(string seriesName, string curveId, IDataStorageClient client)
         {
+            if (string.IsNullOrEmpty(seriesName))
+                throw new ArgumentNullException("seriesName");
+
+            if (string.IsNullOrEmpty(curveId))
+                throw new ArgumentNullException("curveId");
+
+            if (client == null)
+                throw new ArgumentNullException("client");
+
+
             _seriesName = seriesName;
             _client = client;
             _curveId = curveId;
@@ -32,6 +43,9 @@ namespace Infrastructure.Storages
 
         public void Save(Observation observation)
         {
+            if (observation == null)
+                throw new ArgumentNullException("observation");
+            
             var timeseries = MakeTimeseriesData(observation);
 
             var request = CreateRequest();
@@ -44,6 +58,33 @@ namespace Infrastructure.Storages
             {
                 throw new StorageException(response.Message);
             }
+        }
+
+        public Task SaveAsync(Observation observation)
+        {
+            if (observation == null)
+                throw new ArgumentNullException("observation");
+
+            var tcs = new TaskCompletionSource<object>();
+
+            var timeseries = MakeTimeseriesData(observation);
+
+            var request = CreateRequest();
+            request.SetDataPayload(timeseries);
+
+            Logger.Debug($"Sending StoreDataRequest for {request.ActivityId}/{request.DataId?.GlobalId()}...");
+            var response = _client.StoreOne(request);
+
+            if (response.Faulted)
+            {
+                tcs.SetException(new StorageException(response.Message));
+            }
+            else
+            {
+                tcs.SetResult(null);
+            }            
+
+            return tcs.Task;
         }
 
         public void Dispose()
