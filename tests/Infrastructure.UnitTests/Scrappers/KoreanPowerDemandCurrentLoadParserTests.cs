@@ -17,7 +17,7 @@ namespace Infrastructure.UnitTests
             var currentLoad = parser.Parse(content);
 
             // Assert
-            Assert.Equal(currentLoad, 6581200000M);
+            Assert.Equal(6581200000M, currentLoad);
         }
 
         [Fact]
@@ -31,7 +31,7 @@ namespace Infrastructure.UnitTests
             var currentLoad = parser.Parse(content);
 
             // Assert
-            Assert.Equal(currentLoad, 848000M);
+            Assert.Equal(848000M, currentLoad);
         }
 
         [Fact]
