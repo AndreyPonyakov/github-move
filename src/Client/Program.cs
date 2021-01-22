@@ -1,13 +1,8 @@
 ﻿using System;
 using Application.Observers;
 using Gazprom.Angara.Client.Contract;
-using Gazprom.Angara.Client.Storage;
-using Gazprom.Angara.Contract.Entities.TimeSeries;
-using Gazprom.Angara.Contract.Messages;
-using Gazprom.Core.Contract.Entities.Http;
+using Infrastructure.FileStorage;
 using Infrastructure.Scrappers;
-using Infrastructure.Storages;
-using Moq;
 using NLog;
 
 namespace Client
@@ -68,12 +63,9 @@ namespace Client
                 ServiceBaseUrl = BaseUrl,
                 Version = "1"
             };
-            var client = new DataStorageClient(config);
-            // var c = new Mock<IDataStorageClient>();
-            // c.Setup(c => c.StoreOne<TimeSeriesData>(It.IsAny<StoreDataRequest<TimeSeriesData>>()))
-            //     .Returns(new DataResponse<StoreDataResponse>());
-            // var client = c.Object;
-            var storage = new AngaraDataCatalogStorage(scrapperName, curveId, client);
+            // var client = new DataStorageClient(config);
+            // var storage = new AngaraDataCatalogStorage(scrapperName, curveId, client);
+            var storage = new FileStorage(scrapperName);
             return new Observer(scrapper, storage, 5);
         }
     }

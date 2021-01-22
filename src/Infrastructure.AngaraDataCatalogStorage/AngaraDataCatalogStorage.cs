@@ -1,7 +1,5 @@
 using System;
-using System.Threading.Tasks;
 using Domain.Entites;
-using Gazprom.Angara.Client.Contract;
 using Gazprom.Angara.Client.Storage;
 using Gazprom.Angara.Contract.Entities;
 using Gazprom.Angara.Contract.Entities.TimeSeries;
@@ -10,7 +8,7 @@ using Infrastructure.Exceptions;
 using Infrastructure.Interfaces;
 using NLog;
 
-namespace Infrastructure.Storages
+namespace Infrastructure.AngaraDataCatalogStorage
 {
     public sealed class AngaraDataCatalogStorage : IStorage
     {
@@ -18,6 +16,8 @@ namespace Infrastructure.Storages
         private string _seriesName;
         private string _curveId;
         private IDataStorageClient _client;
+        private object _storageLock = new object();
+
 
         public AngaraDataCatalogStorage(string seriesName, string curveId, IDataStorageClient client)
         {
@@ -39,27 +39,6 @@ namespace Infrastructure.Storages
         {
             if (observation == null)
                 throw new ArgumentNullException("observation");
-            
-            var timeseries = MakeTimeseriesData(observation);
-
-            var request = CreateRequest();
-            request.SetDataPayload(timeseries);
-
-            Logger.Debug($"Sending StoreDataRequest for {request.ActivityId}/{request.DataId?.GlobalId()}...");
-            var response = _client.StoreOne(request);
-
-            if (response.Faulted)
-            {
-                throw new StorageException(response.Message);
-            }
-        }
-
-        public Task SaveAsync(Observation observation)
-        {
-            if (observation == null)
-                throw new ArgumentNullException("observation");
-
-            var tcs = new TaskCompletionSource<object>();
 
             var timeseries = MakeTimeseriesData(observation);
 
@@ -67,18 +46,15 @@ namespace Infrastructure.Storages
             request.SetDataPayload(timeseries);
 
             Logger.Debug($"Sending StoreDataRequest for {request.ActivityId}/{request.DataId?.GlobalId()}...");
-            var response = _client.StoreOne(request);
 
-            if (response.Faulted)
+            lock (_storageLock)
             {
-                tcs.SetException(new StorageException(response.Message));
+                var response = _client.StoreOne(request);
+                if (response.Faulted)
+                {
+                    throw new StorageException(response.Message);
+                }
             }
-            else
-            {
-                tcs.SetResult(null);
-            }            
-
-            return tcs.Task;
         }
 
         public void Dispose()
@@ -91,7 +67,7 @@ namespace Infrastructure.Storages
         {
             var timeseries = new TimeSeriesData
             {
-                Points = new []
+                Points = new[]
                 {
                     new TimeSeriesObservation
                     {
@@ -108,7 +84,7 @@ namespace Infrastructure.Storages
         {
             var effectiveDate = new DateTimeOffset(DateTime.Today);
             var dataId = new DataIdentifier
-            {	
+            {
                 Origin = "TestTask",
                 Class = "curve",
                 Grade = "raw",
@@ -118,7 +94,7 @@ namespace Infrastructure.Storages
             var request = new StoreDataRequest<TimeSeriesData>
             {
                 CaptureSystem = _seriesName,
-                CaptureTimeStampUtc = DateTime.UtcNow,		
+                CaptureTimeStampUtc = DateTime.UtcNow,
                 EffectiveOn = effectiveDate,
                 DataId = dataId
             };

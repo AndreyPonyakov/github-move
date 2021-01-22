@@ -1,12 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
   <ItemGroup>
-    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj"/>
-    <ProjectReference Include="..\Application\Application.csproj"/>
-    <None Update="nlog.config" CopyToOutputDirectory="PreserveNewest"/>
+    <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
+    <ProjectReference Include="..\Application\Application.csproj" />
+    <ProjectReference Include="..\Infrastructure.FileStorage\Infrastructure.FileStorage.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.6"/>
-    <PackageReference Include="Moq" Version="4.15.2"/>
+    <PackageReference Include="NLog" Version="4.7.6" />
+    <PackageReference Include="Moq" Version="4.15.2" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="nlog.config" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
   <PropertyGroup>
     <OutputType>Exe</OutputType>

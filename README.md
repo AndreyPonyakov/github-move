@@ -4,6 +4,6 @@ Domain project contains the domain entities
 
 Application project contains the business logic implementation
 
-Infrastructure project contains the data source and data storage implementation
+Infrastructure contains the data source and data storages implementations
 
 Client project is a console application to test the service.

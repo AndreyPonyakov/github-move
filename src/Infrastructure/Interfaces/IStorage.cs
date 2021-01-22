@@ -1,9 +1,10 @@
 using System;
+using Domain.Entites;
 
 namespace Infrastructure.Interfaces
 {
     public interface IStorage : IDisposable
     {
-        void Save(global::Domain.Entites.Observation observation);
+        void Save(Observation observation);
     }
 }

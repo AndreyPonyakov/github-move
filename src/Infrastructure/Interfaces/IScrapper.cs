@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Domain.Entites;
 
 namespace Infrastructure.Interfaces
@@ -6,5 +7,6 @@ namespace Infrastructure.Interfaces
     {
         public string Name { get; }
         Observation GetData();
+        Task<Observation> GetDataAsync();
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Net;
 using System.Text;
+using System.Threading.Tasks;
 using Domain.Entites;
 using Infrastructure.Interfaces;
 
@@ -44,6 +45,15 @@ namespace Infrastructure.Scrappers
         public Observation GetData()
         {
             var content = _siteReader.GetHtmlContent();
+            DateTimeOffset timeStamp = _timeStampParser.Parse(content);
+            decimal value = _currentLoadParser.Parse(content);
+
+            return new Observation(timeStamp, value);
+        }
+
+        public async Task<Observation> GetDataAsync()
+        {
+            var content = await _siteReader.GetHtmlContentAsync();
             DateTimeOffset timeStamp = _timeStampParser.Parse(content);
             decimal value = _currentLoadParser.Parse(content);
 

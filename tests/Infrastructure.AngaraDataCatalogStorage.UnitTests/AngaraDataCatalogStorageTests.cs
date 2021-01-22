@@ -57,33 +57,5 @@ namespace Infrastructure.UnitTests
 
             // Assert
         }
-
-        [Fact]
-        public async Task SaveObservationTestAsync()
-        {
-            // Arrange
-            var scrapeName = "test series";
-            var curveId = "1234";
-            var client = new Mock<IDataStorageClient>();
-            client.Setup(c => c.StoreOne<TimeSeriesData>(It.IsAny<StoreDataRequest<TimeSeriesData>>()))
-                .Returns(new DataResponse<StoreDataResponse>());
-            var storage =  new AngaraDataCatalogStorage(scrapeName, curveId, client.Object);
-            var observation = new Observation(DateTime.Now, 1M);
-
-            // Act
-            await storage.SaveAsync(observation);
-
-            // Assert
-            client.Verify(x => x.StoreOne<TimeSeriesData>(
-                It.Is<StoreDataRequest<TimeSeriesData>>(tsd => 
-                    tsd.DataPayload.Data.Points.First().Value == observation.CurrentLoad
-                    && tsd.DataPayload.Data.Points.First().DatePoint == observation.TimeStamp
-                    && tsd.DataId.Id == curveId
-                    && tsd.CaptureSystem == scrapeName
-                    && tsd.DataId.Class == "curve"
-                    && tsd.DataId.Grade == "raw")));
-
-        }
-
     }
 }
